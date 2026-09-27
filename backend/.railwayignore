@@ -1,0 +1,8 @@
+# Railway ignore — files to exclude from the Railway deployment build context
+# (Railway respects .gitignore too, but this is explicit)
+
+node_modules/
+dist/
+.env
+*.log
+*.md
