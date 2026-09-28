@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { paymentService } from '../services/paymentService';
 import { PAYMENT_METHODS, EVENT_DETAILS } from '../config/constants';
 import { logger } from '../utils/logger';
-
+import { emitPaymentSuccess } from '../services/paymentEvents';
 // Input validation schema using Zod
 const createPaymentSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -116,16 +116,24 @@ export class PaymentController {
       const reference = Array.isArray(rawRef) ? rawRef[0] : rawRef;
 
       if (!reference) {
-        res.status(400).json({ success: false, error: 'Reference is required' });
+        res.status(400).json({
+          success: false,
+          error: 'Reference is required'
+        });
         return;
       }
 
       const ticket = await paymentService.simulatePaymentApproval(reference);
 
       if (!ticket) {
-        res.status(404).json({ success: false, error: 'Payment record not found' });
+        res.status(404).json({
+          success: false,
+          error: 'Payment record not found'
+        });
         return;
       }
+
+      emitPaymentSuccess(reference, ticket);
 
       res.status(200).json({
         success: true,
@@ -134,7 +142,10 @@ export class PaymentController {
         ticket
       });
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
     }
   }
 

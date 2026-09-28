@@ -40,7 +40,56 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
   const isPollingRef = useRef(true);
 
   const reference = paymentData.reference;
+  useEffect(() => {
+    const apiBaseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://leap-network-event-ticket-system-production.up.railway.app/api';
 
+    const eventSource = new EventSource(
+      `${apiBaseUrl}/payments/${encodeURIComponent(reference)}/events`
+    );
+
+    eventSource.onopen = () => {
+      console.log('[Payment SSE] Connected:', reference);
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        console.log('[Payment SSE] Event received:', data);
+
+        if (
+          data.type === 'PAYMENT_SUCCESSFUL' &&
+          data.ticket
+        ) {
+          isPollingRef.current = false;
+
+          setCurrentStatus('SUCCESSFUL');
+          setConfirmedTicket(data.ticket);
+
+          eventSource.close();
+
+          setTimeout(() => {
+            onSuccess(data.ticket);
+          }, 1200);
+        }
+      } catch (error) {
+        console.error('[Payment SSE] Invalid event:', error);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.warn('[Payment SSE] Connection error:', error);
+
+      // Polling remains available as fallback.
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [reference, onSuccess]);
   useEffect(() => {
     isPollingRef.current = true;
     let pollInterval: NodeJS.Timeout;

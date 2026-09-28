@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { paymentService } from '../services/paymentService';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
+import { emitPaymentSuccess } from '../services/paymentEvents';
 
 export class WebhookController {
   /**
@@ -24,6 +25,17 @@ export class WebhookController {
 
     try {
       const result = await paymentService.processLipilaWebhook(payload);
+      if (
+        result.success &&
+        result.status === 'SUCCESSFUL' &&
+        result.reference
+      ) {
+        const payment = await paymentService.getPaymentStatus(result.reference);
+
+        if (payment?.ticket) {
+          emitPaymentSuccess(result.reference, payment.ticket);
+        }
+      }
 
       // Always return 200 to acknowledge webhook receipt to Lipila
       res.status(200).json({
