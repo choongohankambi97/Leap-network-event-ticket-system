@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { 
-  Loader2, 
-  Smartphone, 
-  CreditCard, 
-  AlertCircle, 
-  RefreshCw, 
-  X, 
+import {
+  Loader2,
+  Smartphone,
+  CreditCard,
+  AlertCircle,
+  RefreshCw,
+  X,
   ExternalLink,
   Zap,
   CheckCircle2,
@@ -85,7 +85,7 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border-2 border-[#E8DACB] shadow-2xl relative overflow-hidden text-center my-auto max-h-[92vh] overflow-y-auto">
-        
+
         {/* Close Button on Failed/Cancelled */}
         {(currentStatus === "FAILED" || currentStatus === "CANCELLED") && (
           <button
@@ -143,7 +143,7 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
         {/* 2. ACTIVE PENDING / PROCESSING STATE */}
         {currentStatus === "PENDING" && (
           <div className="space-y-5 sm:space-y-6">
-            
+
             {/* Pulsing Radar Animation */}
             <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-[#E25619]/20 animate-ping" />
@@ -229,7 +229,18 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
               <span>Listening for Lipila webhook approval ({pollCount + 1})...</span>
             </div>
 
+            <button
+              type="button"
+              onClick={() => {
+                isPollingRef.current = false;
+                onClose();
+              }}
+              className="mt-5 w-full rounded-xl border border-[#D8C7B8] bg-white px-4 py-3 text-sm font-semibold text-[#6B5A4D] transition hover:bg-[#F8F3EE]"
+            >
+              Cancel Payment
+            </button>
           </div>
+
         )}
 
         {/* 3. FAILED / CANCELLED STATE */}
