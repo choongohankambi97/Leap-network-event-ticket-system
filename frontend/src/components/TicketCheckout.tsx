@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Ticket, 
-  Smartphone, 
-  CreditCard, 
-  ShieldCheck, 
-  AlertCircle, 
-  Plus, 
-  Minus, 
-  Check, 
-  Lock, 
+import {
+  Ticket,
+  Smartphone,
+  CreditCard,
+  ShieldCheck,
+  AlertCircle,
+  Plus,
+  Minus,
+  Check,
+  Lock,
   ArrowRight,
   Info
 } from "lucide-react";
@@ -23,21 +23,20 @@ interface TicketCheckoutProps {
 
 const TIER_PRICES = {
   standard: 500,
-  testing: 1,
 } as const;
 
 export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiated }) => {
-  const [ticketTier, setTicketTier] = useState<'standard' | 'testing'>('standard');
+ const [ticketTier, setTicketTier] = useState<'standard'>('standard');
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MOBILE_MONEY");
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const unitPrice = TIER_PRICES[ticketTier];
+  const unitPrice = 500;
   const subtotal = unitPrice * quantity;
 
   const handleIncrement = () => {
@@ -94,7 +93,7 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
   return (
     <section id="checkout" className="py-20 bg-[#FAF6F0] relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#E25619]">
@@ -110,11 +109,11 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
 
         {/* Main Checkout Container */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Column: Form Details (7 Cols) */}
           <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DACB] shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
-              
+
               {/* Error Alert */}
               {errorMessage && (
                 <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-start space-x-3 text-sm">
@@ -137,50 +136,22 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                   {/* Standard Pass */}
                   <div
                     onClick={() => setTicketTier('standard')}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between ${
-                      ticketTier === 'standard'
-                        ? 'border-[#E25619] bg-[#FAF0E6]/50 shadow-sm'
-                        : 'border-[#E8DACB] bg-white hover:border-[#D9C8B5]'
-                    }`}
+                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between ${ticketTier === 'standard'
+                      ? 'border-[#E25619] bg-[#FAF0E6]/50 shadow-sm'
+                      : 'border-[#E8DACB] bg-white hover:border-[#D9C8B5]'
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-extrabold uppercase tracking-wider text-[#1A1715]">
                         Standard Pass
                       </span>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        ticketTier === 'standard' ? 'border-[#E25619] bg-[#E25619]' : 'border-[#A8A29E]'
-                      }`}>
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${ticketTier === 'standard' ? 'border-[#E25619] bg-[#E25619]' : 'border-[#A8A29E]'
+                        }`}>
                         {ticketTier === 'standard' && <Check className="w-2.5 h-2.5 text-white" />}
                       </div>
                     </div>
                     <p className="text-xl font-black font-editorial text-[#E25619] mb-1">K500</p>
                     <p className="text-[11px] text-[#78716C]">Full event admission & dinner</p>
-                  </div>
-
-                  {/* Testing Ticket (K1) */}
-                  <div
-                    onClick={() => setTicketTier('testing')}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between relative overflow-hidden ${
-                      ticketTier === 'testing'
-                        ? 'border-emerald-600 bg-emerald-50/70 shadow-sm'
-                        : 'border-emerald-300 bg-emerald-50/20 hover:border-emerald-400'
-                    }`}
-                  >
-                    <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] uppercase font-black px-2 py-0.5 rounded-bl-lg">
-                      Live Test
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-900">
-                        Testing Ticket
-                      </span>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        ticketTier === 'testing' ? 'border-emerald-600 bg-emerald-600' : 'border-[#A8A29E]'
-                      }`}>
-                        {ticketTier === 'testing' && <Check className="w-2.5 h-2.5 text-white" />}
-                      </div>
-                    </div>
-                    <p className="text-xl font-black font-editorial text-emerald-700 mb-1">K1</p>
-                    <p className="text-[11px] text-emerald-800">Deposit test into merchant account</p>
                   </div>
                 </div>
               </div>
@@ -261,9 +232,6 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
 
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FAF6F0] border border-[#E8DACB]">
                   <div>
-                    <p className="text-sm font-bold text-[#1A1715]">
-                      {ticketTier === 'testing' ? 'Testing Ticket (Live Test)' : 'Standard Delegate Pass'}
-                    </p>
                     <p className="text-xs text-[#78716C]">K{unitPrice} per ticket</p>
                   </div>
 
@@ -306,16 +274,14 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                   {/* Mobile Money Card */}
                   <label
                     onClick={() => setPaymentMethod("MOBILE_MONEY")}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-start space-x-3 ${
-                      paymentMethod === "MOBILE_MONEY"
-                        ? "border-[#E25619] bg-[#FAF0E6]/50 shadow-sm"
-                        : "border-[#E8DACB] bg-white hover:border-[#D9C8B5]"
-                    }`}
+                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-start space-x-3 ${paymentMethod === "MOBILE_MONEY"
+                      ? "border-[#E25619] bg-[#FAF0E6]/50 shadow-sm"
+                      : "border-[#E8DACB] bg-white hover:border-[#D9C8B5]"
+                      }`}
                   >
                     <div className="mt-0.5">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        paymentMethod === "MOBILE_MONEY" ? "border-[#E25619] bg-[#E25619]" : "border-[#A8A29E]"
-                      }`}>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "MOBILE_MONEY" ? "border-[#E25619] bg-[#E25619]" : "border-[#A8A29E]"
+                        }`}>
                         {paymentMethod === "MOBILE_MONEY" && <Check className="w-3 h-3 text-white" />}
                       </div>
                     </div>
@@ -333,16 +299,14 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                   {/* Card Payment Card */}
                   <label
                     onClick={() => setPaymentMethod("CARD")}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-start space-x-3 ${
-                      paymentMethod === "CARD"
-                        ? "border-[#E25619] bg-[#FAF0E6]/50 shadow-sm"
-                        : "border-[#E8DACB] bg-white hover:border-[#D9C8B5]"
-                    }`}
+                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-start space-x-3 ${paymentMethod === "CARD"
+                      ? "border-[#E25619] bg-[#FAF0E6]/50 shadow-sm"
+                      : "border-[#E8DACB] bg-white hover:border-[#D9C8B5]"
+                      }`}
                   >
                     <div className="mt-0.5">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        paymentMethod === "CARD" ? "border-[#E25619] bg-[#E25619]" : "border-[#A8A29E]"
-                      }`}>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "CARD" ? "border-[#E25619] bg-[#E25619]" : "border-[#A8A29E]"
+                        }`}>
                         {paymentMethod === "CARD" && <Check className="w-3 h-3 text-white" />}
                       </div>
                     </div>
@@ -388,7 +352,7 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
           {/* Right Column: Order Summary (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DACB] shadow-sm sticky top-28">
-              
+
               <div className="flex items-center space-x-2 pb-4 border-b border-[#F0E6DA]">
                 <Ticket className="w-5 h-5 text-[#E25619]" />
                 <h3 className="font-editorial text-xl font-bold text-[#1A1715]">Order Summary</h3>
@@ -407,7 +371,6 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
               {/* Cost Calculation Breakdown */}
               <div className="py-4 border-b border-[#F0E6DA] space-y-3 text-sm">
                 <div className="flex items-center justify-between text-[#57534E]">
-                  <span>Tier ({ticketTier === 'testing' ? 'Live Test' : 'Standard'})</span>
                   <span className="font-semibold text-[#1A1715]">K{unitPrice}</span>
                 </div>
                 <div className="flex items-center justify-between text-[#57534E]">

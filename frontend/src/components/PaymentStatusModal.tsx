@@ -16,7 +16,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { CreatePaymentResponse, PaymentStatus, TicketDetails } from "../lib/types";
-import { fetchPaymentStatus, simulatePaymentApproval } from "../lib/api";
+import { fetchPaymentStatus } from "../lib/api";
 
 interface PaymentStatusModalProps {
   paymentData: CreatePaymentResponse;
@@ -36,7 +36,6 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
   const [currentStatus, setCurrentStatus] = useState<PaymentStatus>("PENDING");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [pollCount, setPollCount] = useState(0);
-  const [isSimulating, setIsSimulating] = useState(false);
   const [confirmedTicket, setConfirmedTicket] = useState<TicketDetails | null>(null);
   const isPollingRef = useRef(true);
 
@@ -82,25 +81,6 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
       clearInterval(pollInterval);
     };
   }, [reference, onSuccess]);
-
-  const handleSimulateInstantApproval = async () => {
-    setIsSimulating(true);
-    try {
-      const res = await simulatePaymentApproval(reference);
-      if (res.ticket) {
-        isPollingRef.current = false;
-        setConfirmedTicket(res.ticket);
-        setCurrentStatus("SUCCESSFUL");
-        setTimeout(() => {
-          onSuccess(res.ticket);
-        }, 2000);
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || "Simulation failed");
-    } finally {
-      setIsSimulating(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
@@ -247,19 +227,6 @@ export const PaymentStatusModal: React.FC<PaymentStatusModalProps> = ({
             <div className="flex items-center justify-center space-x-2 text-xs text-[#78716C]">
               <Loader2 className="w-4 h-4 animate-spin text-[#E25619]" />
               <span>Listening for Lipila webhook approval ({pollCount + 1})...</span>
-            </div>
-
-            {/* Developer Sandbox Testing Shortcut */}
-            <div className="pt-3 border-t border-[#F0E6DA]">
-              <button
-                type="button"
-                onClick={handleSimulateInstantApproval}
-                disabled={isSimulating}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-[#E25619] hover:from-amber-600 hover:to-[#C0420E] text-white text-xs font-bold tracking-wide flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-95"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                <span>{isSimulating ? "Simulating approval..." : "Instant Test Approval (Sandbox Mode)"}</span>
-              </button>
             </div>
 
           </div>

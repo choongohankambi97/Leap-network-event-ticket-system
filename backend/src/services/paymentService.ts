@@ -56,7 +56,7 @@ export class PaymentService {
     private repository: IPaymentRepository = new InMemoryPaymentRepository(),
     private lipila = lipilaService,
     private tickets = ticketService
-  ) {}
+  ) { }
 
   /**
    * Initiate a new ticket purchase payment
@@ -67,16 +67,10 @@ export class PaymentService {
     lipilaResponse: any;
   }> {
     const quantity = Math.max(1, Math.min(20, Math.floor(dto.quantity || 1)));
-    
+
     // Determine unit price: K1 for temporary testing ticket tier, K500 for standard
     let unitPrice: number = EVENT_DETAILS.ticketPriceZMW;
     let tierName: string = TICKET_TIERS.STANDARD.name;
-
-    if (ENABLE_TESTING_TICKET && dto.ticketTierId === 'testing') {
-      unitPrice = TICKET_TIERS.TESTING.price; // K1
-      tierName = TICKET_TIERS.TESTING.name;
-    }
-
     const totalAmount = unitPrice * quantity;
     const paymentId = uuidv4();
     const now = new Date().toISOString();
@@ -169,8 +163,8 @@ export class PaymentService {
     cardRedirectionUrl?: string | null;
     failureReason?: string;
   } | null> {
-    const payment = await this.repository.findById(referenceId) || 
-                    await this.repository.findByLipilaReference(referenceId);
+    const payment = await this.repository.findById(referenceId) ||
+      await this.repository.findByLipilaReference(referenceId);
 
     if (!payment) return null;
 
@@ -203,8 +197,8 @@ export class PaymentService {
       throw new Error('Reference ID is missing in webhook payload');
     }
 
-    const payment = await this.repository.findById(reference) || 
-                    await this.repository.findByLipilaReference(reference);
+    const payment = await this.repository.findById(reference) ||
+      await this.repository.findByLipilaReference(reference);
 
     if (!payment) {
       logger.warn(`[PaymentService] Payment not found for webhook reference: ${reference}`);
