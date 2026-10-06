@@ -12,7 +12,8 @@ import {
   Check,
   Lock,
   ArrowRight,
-  Info
+  Info,
+  FlaskConical
 } from "lucide-react";
 import { PaymentMethod, CreatePaymentDTO, CreatePaymentResponse } from "../lib/types";
 import { createPayment } from "../lib/api";
@@ -23,10 +24,14 @@ interface TicketCheckoutProps {
 
 const TIER_PRICES = {
   standard: 500,
+  testing: 1,
 } as const;
 
+type TicketTier = 'standard' | 'testing';
+
+
 export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiated }) => {
- const [ticketTier, setTicketTier] = useState<'standard'>('standard');
+ const [ticketTier, setTicketTier] = useState<TicketTier>('standard');
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -36,8 +41,9 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const unitPrice = 500;
+  const unitPrice = TIER_PRICES[ticketTier];
   const subtotal = unitPrice * quantity;
+
 
   const handleIncrement = () => {
     if (quantity < 20) setQuantity(prev => prev + 1);
@@ -152,6 +158,38 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                     </div>
                     <p className="text-xl font-black font-editorial text-[#E25619] mb-1">K500</p>
                     <p className="text-[11px] text-[#78716C]">Full event admission & dinner</p>
+                  </div>
+
+                  {/* K1 Live Test Ticket */}
+                  <div
+                    onClick={() => setTicketTier('testing')}
+                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between relative overflow-hidden ${
+                      ticketTier === 'testing'
+                        ? 'border-amber-500 bg-amber-50/60 shadow-sm'
+                        : 'border-amber-200 bg-white hover:border-amber-300'
+                    }`}
+                  >
+                    {/* Testing badge */}
+                    <div className="absolute top-0 right-0">
+                      <span className="text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-bl-lg">
+                        TESTING
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-1.5">
+                        <FlaskConical className="w-3.5 h-3.5 text-amber-600" />
+                        <span className="text-xs font-extrabold uppercase tracking-wider text-[#1A1715]">
+                          Live Test
+                        </span>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        ticketTier === 'testing' ? 'border-amber-500 bg-amber-500' : 'border-[#A8A29E]'
+                      }`}>
+                        {ticketTier === 'testing' && <Check className="w-2.5 h-2.5 text-white" />}
+                      </div>
+                    </div>
+                    <p className="text-xl font-black font-editorial text-amber-600 mb-1">K1</p>
+                    <p className="text-[11px] text-[#78716C]">Real Lipila charge — verifies merchant deposits</p>
                   </div>
                 </div>
               </div>
@@ -329,7 +367,11 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                   type="submit"
                   disabled={isLoading}
                   id="submit-payment-btn"
-                  className="w-full py-4 px-6 rounded-2xl bg-[#E25619] hover:bg-[#C0420E] text-white font-bold text-base tracking-wider uppercase shadow-lg shadow-[#E25619]/25 flex items-center justify-center space-x-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className={`w-full py-4 px-6 rounded-2xl text-white font-bold text-base tracking-wider uppercase shadow-lg flex items-center justify-center space-x-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                    ticketTier === 'testing'
+                      ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/25'
+                      : 'bg-[#E25619] hover:bg-[#C0420E] shadow-[#E25619]/25'
+                  }`}
                 >
                   {isLoading ? (
                     <div className="flex items-center space-x-2">
@@ -339,7 +381,11 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      <span>Pay K{subtotal.toLocaleString()} & Get Ticket</span>
+                      <span>
+                        {ticketTier === 'testing'
+                          ? `🧪 Test Payment — K${subtotal.toLocaleString()}`
+                          : `Pay K${subtotal.toLocaleString()} & Get Ticket`}
+                      </span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -388,9 +434,16 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
                 <div>
                   <p className="text-xs uppercase tracking-wider font-bold text-[#78716C]">Total Amount</p>
                   <p className="text-[11px] text-[#A8A29E]">Zambian Kwacha (ZMW)</p>
+                  {ticketTier === 'testing' && (
+                    <span className="inline-block mt-1 text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 border border-amber-300 px-2 py-0.5 rounded-full">
+                      🧪 LIVE TEST CHARGE
+                    </span>
+                  )}
                 </div>
                 <div className="text-right">
-                  <span className="font-editorial text-3xl font-black text-[#E25619]">
+                  <span className={`font-editorial text-3xl font-black ${
+                    ticketTier === 'testing' ? 'text-amber-600' : 'text-[#E25619]'
+                  }`}>
                     K{subtotal.toLocaleString()}
                   </span>
                 </div>
