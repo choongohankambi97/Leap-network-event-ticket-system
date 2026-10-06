@@ -73,7 +73,7 @@ export const TicketCheckout: React.FC<TicketCheckoutProps> = ({ onPaymentInitiat
       phone: cleanPhone,
       quantity,
       paymentMethod,
-      ticketTierId: ticketTier
+      ticketTierId: 'standard'
     };
 
     setIsLoading(true);

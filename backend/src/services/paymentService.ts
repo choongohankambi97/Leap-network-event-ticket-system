@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { EVENT_DETAILS, PAYMENT_METHODS, PAYMENT_STATUSES, PaymentStatus, TICKET_TIERS, ENABLE_TESTING_TICKET } from '../config/constants';
+import { EVENT_DETAILS, PAYMENT_METHODS, PAYMENT_STATUSES, PaymentStatus, TICKET_TIERS } from '../config/constants';
 import { CreatePaymentDTO, PaymentRecord, TicketDetails } from '../types';
 import { lipilaService } from './lipilaService';
 import { ticketService } from './ticketService';
@@ -68,10 +68,9 @@ export class PaymentService {
   }> {
     const quantity = Math.max(1, Math.min(20, Math.floor(dto.quantity || 1)));
 
-    // Determine unit price: K1 for testing tier (real live deposit verification), K500 for standard
-    const isTesting = ENABLE_TESTING_TICKET && dto.ticketTierId === 'testing';
-    const unitPrice: number = isTesting ? EVENT_DETAILS.testingPriceZMW : EVENT_DETAILS.ticketPriceZMW;
-    const tierName: string = isTesting ? TICKET_TIERS.TESTING.name : TICKET_TIERS.STANDARD.name;
+    // Determine unit price
+    const unitPrice: number = EVENT_DETAILS.ticketPriceZMW;
+    const tierName: string = TICKET_TIERS.STANDARD.name;
     const totalAmount = unitPrice * quantity;
     const paymentId = uuidv4();
     const now = new Date().toISOString();

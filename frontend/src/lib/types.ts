@@ -8,7 +8,7 @@ export interface CreatePaymentDTO {
   phone: string;
   quantity: number;
   paymentMethod: PaymentMethod;
-  ticketTierId?: 'standard' | 'testing';
+  ticketTierId?: 'standard';
 }
 
 export interface TicketDetails {

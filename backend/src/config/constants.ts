@@ -1,5 +1,3 @@
-export const ENABLE_TESTING_TICKET = true; // Set to false to disable/remove the K1 test ticket
-
 export const TICKET_TIERS = {
   STANDARD: {
     id: 'standard',
@@ -7,13 +5,6 @@ export const TICKET_TIERS = {
     price: 500,
     currency: 'ZMW',
     description: 'Full Day Summit & Evening Networking Access'
-  },
-  TESTING: {
-    id: 'testing',
-    name: 'Testing Ticket (Live Deposit Verification)',
-    price: 1,
-    currency: 'ZMW',
-    description: 'Temporary K1 test pass to verify merchant account deposits'
   }
 } as const;
 
@@ -29,7 +20,6 @@ export const EVENT_DETAILS = {
   venue: 'August Loft Water Falls',
   city: 'Lusaka, Zambia',
   ticketPriceZMW: 500,
-  testingPriceZMW: 1,
   currency: 'ZMW',
   contactPhone: '0979333751',
   contactEmail: 'connect@leapnetworks.org',
